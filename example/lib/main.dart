@@ -30,9 +30,11 @@ class _MyHomePageState extends State<MyHomePage> {
   late final _expressionController = TextEditingController();
 
   bool _onError = false;
-  var _path = <PathDirection>[];
   var _width = 10;
   var _height = 10;
+  var _startingPoint = (4, 4);
+  var _steps = <(int, int)>[];
+  late var _lastStep = _startingPoint;
 
   @override
   void dispose() {
@@ -73,7 +75,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onChangeExpression() {
     if (_expressionController.text.isEmpty) {
       setState(() {
-        _path = [];
+        _steps = [];
+        _lastStep = _startingPoint;
       });
       return;
     }
@@ -88,8 +91,27 @@ class _MyHomePageState extends State<MyHomePage> {
       });
 
       final path = pathXp.path;
+
+      var point = _startingPoint;
+      final newSteps = <(int, int)>[point];
+
+      for (final direction in path) {
+        switch (direction) {
+          case PathDirection.T:
+            point = (point.$1, point.$2 - 1);
+          case PathDirection.B:
+            point = (point.$1, point.$2 + 1);
+          case PathDirection.L:
+            point = (point.$1 - 1, point.$2);
+          case PathDirection.R:
+            point = (point.$1 + 1, point.$2);
+        }
+        newSteps.add(point);
+      }
+
       setState(() {
-        _path = path;
+        _steps = newSteps;
+        _lastStep = point;
       });
     } catch (_) {
       setState(() {
@@ -117,46 +139,50 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  NesContainer(
-                    width: 320,
-                    padding: const EdgeInsets.all(8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        NesIconButton(
-                          icon: NesIcons.instance.add,
-                          onPress: incrementWidth,
+                  Row(
+                    children: [
+                      NesContainer(
+                        width: 320,
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            NesIconButton(
+                              icon: NesIcons.add,
+                              onPress: incrementWidth,
+                            ),
+                            const SizedBox(width: 8),
+                            Text('Width: $_width'),
+                            const SizedBox(width: 8),
+                            NesIconButton(
+                              icon: NesIcons.remove,
+                              onPress: decrementWidth,
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Text('Width: $_width'),
-                        const SizedBox(width: 8),
-                        NesIconButton(
-                          icon: NesIcons.instance.remove,
-                          onPress: decrementWidth,
+                      ),
+                      const SizedBox(width: 16),
+                      NesContainer(
+                        width: 320,
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            NesIconButton(
+                              icon: NesIcons.add,
+                              onPress: incrementHeight,
+                            ),
+                            const SizedBox(width: 8),
+                            Text('Height: $_height'),
+                            const SizedBox(width: 8),
+                            NesIconButton(
+                              icon: NesIcons.remove,
+                              onPress: decrementHeight,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  NesContainer(
-                    width: 320,
-                    padding: const EdgeInsets.all(8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        NesIconButton(
-                          icon: NesIcons.instance.add,
-                          onPress: incrementHeight,
-                        ),
-                        const SizedBox(width: 8),
-                        Text('Height: $_height'),
-                        const SizedBox(width: 8),
-                        NesIconButton(
-                          icon: NesIcons.instance.remove,
-                          onPress: decrementHeight,
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -174,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               ? constraints.maxWidth / _width
                               : constraints.maxHeight / _height;
 
-                      final cellColor =
+                      final stepColor =
                           Theme.of(context).textTheme.bodyMedium?.color ??
                               Colors.black;
 
@@ -191,11 +217,51 @@ class _MyHomePageState extends State<MyHomePage> {
                                     top: y * cellSize,
                                     width: cellSize,
                                     height: cellSize,
-                                    child: DecoratedBox(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: cellColor,
-                                        ),
+                                    child: NesPressable(
+                                      onPress: () {
+                                        setState(() {
+                                          _startingPoint = (x, y);
+                                          _lastStep = _startingPoint;
+                                          _onChangeExpression();
+                                        });
+                                      },
+                                      child: NesContainer(
+                                        width: cellSize,
+                                        height: cellSize,
+                                        padding: EdgeInsets.zero,
+                                        child: (x, y) == _startingPoint
+                                            ? Center(
+                                                child: NesIcon(
+                                                  size: Size.square(
+                                                    cellSize * .6,
+                                                  ),
+                                                  iconData: NesIcons.flag,
+                                                ),
+                                              )
+                                            : (x, y) == _lastStep
+                                                ? Center(
+                                                    child: NesIcon(
+                                                      size: Size.square(
+                                                        cellSize * .6,
+                                                      ),
+                                                      iconData:
+                                                          NesIcons.checkedFlag,
+                                                    ),
+                                                  )
+                                                : _steps.contains((x, y))
+                                                    ? Align(
+                                                        child: SizedBox.square(
+                                                          dimension:
+                                                              cellSize * .6,
+                                                          child: DecoratedBox(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: stepColor,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : null,
                                       ),
                                     ),
                                   ),

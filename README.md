@@ -6,6 +6,8 @@
 
 Like regular expressions but for defining paths in a grid
 
+![](./banner.png)
+
 ## Installation 💻
 
 **❗ In order to start using Pathxp you must have the [Dart SDK][dart_install_link] installed on your machine.**
@@ -16,35 +18,35 @@ Install via `dart pub add`:
 dart pub add pathxp
 ```
 
----
+## Using it
 
-## Continuous Integration 🤖
+`pathxp` have a very simple syntax, between `{}`, you can use `T` (top), `B` (bottom), `L` (left)
+or `R` (right), separed by `,`, to define a path.
 
-Pathxp comes with a built-in [GitHub Actions workflow][github_actions_link] powered by [Very Good Workflows][very_good_workflows_link] but you can also add your preferred CI/CD solution.
+For example:
 
-Out of the box, on each pull request and push, the CI `formats`, `lints`, and `tests` the code. This ensures the code remains consistent and behaves correctly as you add functionality or make changes. The project uses [Very Good Analysis][very_good_analysis_link] for a strict set of analysis options used by our team. Code coverage is enforced using the [Very Good Workflows][very_good_coverage_link].
-
----
-
-## Running Tests 🧪
-
-To run all unit tests:
-
-```sh
-dart pub global activate coverage 1.2.0
-dart test --coverage=coverage
-dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info
+```
+{T, L, B}
 ```
 
-To view the generated coverage report you can use [lcov](https://github.com/linux-test-project/lcov).
+Represents a path goes up, left and finally, bottom.
 
-```sh
-# Generate Coverage Report
-genhtml coverage/lcov.info -o coverage/
+To define multiples steps in the same direction, a number can be added in front of the direction
+symbol:
 
-# Open Coverage Report
-open coverage/index.html
 ```
+{2T, L, 3B}
+```
+
+This expression means two steps up, one left and 3 down.
+
+## Online editor
+
+A simple online editor where you can test expressions is available at: https://erickzanardo.github.io/pathxp/
+
+
+---
+
 
 [dart_install_link]: https://dart.dev/get-dart
 [github_actions_link]: https://docs.github.com/en/actions/learn-github-actions
