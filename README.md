@@ -21,7 +21,7 @@ dart pub add pathxp
 ## Using it
 
 `pathxp` have a very simple syntax, between `{}`, you can use `T` (top), `B` (bottom), `L` (left)
-or `R` (right), separed by `,`, to define a path.
+or `R` (right), separated by `,`, to define a path.
 
 For example:
 
