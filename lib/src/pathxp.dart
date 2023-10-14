@@ -46,7 +46,7 @@ class Pathxp {
       throw ArgumentError('Invalid path expression: $expression');
     }
 
-    final partRegExp = RegExp('([0-9]+)?([TBLR]+)');
+    final partRegExp = RegExp(r'([0-9]+)?([TBLR])$');
 
     final parts = internalExpression.split(',');
 
@@ -60,11 +60,7 @@ class Pathxp {
       }
 
       final count = int.parse(match.group(1) ?? '1');
-      final direction = match.group(2);
-
-      if (direction == null) {
-        throw ArgumentError('Unknow token: $part');
-      }
+      final direction = match.group(2)!;
 
       parsedPath.addAll(
         List<PathDirection>.filled(

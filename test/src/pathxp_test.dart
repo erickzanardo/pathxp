@@ -38,5 +38,21 @@ void main() {
         ),
       );
     });
+
+    test('throws when the expression is invalid', () {
+      expect(
+        () => Pathxp('1T, 2L, 4R}').path,
+        throwsArgumentError,
+      );
+
+      expect(
+        () => Pathxp('{A, 2L, 4R}').path,
+        throwsArgumentError,
+      );
+      expect(
+        () => Pathxp('{1BB}').path,
+        throwsArgumentError,
+      );
+    });
   });
 }
