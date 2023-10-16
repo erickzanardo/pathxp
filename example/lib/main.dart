@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var _startingPoint = (4, 4);
   var _steps = <(int, int)>[];
   late var _lastStep = _startingPoint;
+  PathResult? _parsedPath;
 
   @override
   void dispose() {
@@ -95,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
       var point = _startingPoint;
       final newSteps = <(int, int)>[point];
 
-      for (final direction in path) {
+      for (final direction in path.path) {
         switch (direction) {
           case PathDirection.T:
             point = (point.$1, point.$2 - 1);
@@ -110,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
 
       setState(() {
+        _parsedPath = path;
         _steps = newSteps;
         _lastStep = point;
       });
@@ -122,6 +124,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final modifiers = [
+      if (_parsedPath?.repeating ?? false) NesIcons.redo,
+    ];
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -204,70 +210,78 @@ class _MyHomePageState extends State<MyHomePage> {
                           Theme.of(context).textTheme.bodyMedium?.color ??
                               Colors.black;
 
-                      return Center(
-                        child: SizedBox(
-                          width: _width * cellSize,
-                          height: _height * cellSize,
-                          child: Stack(
-                            children: [
-                              for (var y = 0; y < _height; y++)
-                                for (var x = 0; x < _width; x++)
-                                  Positioned(
-                                    left: x * cellSize,
-                                    top: y * cellSize,
-                                    width: cellSize,
-                                    height: cellSize,
-                                    child: NesPressable(
-                                      onPress: () {
-                                        setState(() {
-                                          _startingPoint = (x, y);
-                                          _lastStep = _startingPoint;
-                                          _onChangeExpression();
-                                        });
-                                      },
-                                      child: NesContainer(
+                      return Stack(
+                        children: [
+                          Center(
+                            child: SizedBox(
+                              width: _width * cellSize,
+                              height: _height * cellSize,
+                              child: Stack(
+                                children: [
+                                  for (var y = 0; y < _height; y++)
+                                    for (var x = 0; x < _width; x++)
+                                      Positioned(
+                                        left: x * cellSize,
+                                        top: y * cellSize,
                                         width: cellSize,
                                         height: cellSize,
-                                        padding: EdgeInsets.zero,
-                                        child: (x, y) == _startingPoint
-                                            ? Center(
-                                                child: NesIcon(
-                                                  size: Size.square(
-                                                    cellSize * .6,
-                                                  ),
-                                                  iconData: NesIcons.flag,
-                                                ),
-                                              )
-                                            : (x, y) == _lastStep
+                                        child: NesPressable(
+                                          onPress: () {
+                                            setState(() {
+                                              _startingPoint = (x, y);
+                                              _lastStep = _startingPoint;
+                                              _onChangeExpression();
+                                            });
+                                          },
+                                          child: NesContainer(
+                                            width: cellSize,
+                                            height: cellSize,
+                                            padding: EdgeInsets.zero,
+                                            child: (x, y) == _startingPoint
                                                 ? Center(
                                                     child: NesIcon(
                                                       size: Size.square(
                                                         cellSize * .6,
                                                       ),
-                                                      iconData:
-                                                          NesIcons.checkedFlag,
+                                                      iconData: NesIcons.flag,
                                                     ),
                                                   )
-                                                : _steps.contains((x, y))
-                                                    ? Align(
-                                                        child: SizedBox.square(
-                                                          dimension:
-                                                              cellSize * .6,
-                                                          child: DecoratedBox(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: stepColor,
-                                                            ),
+                                                : (x, y) == _lastStep
+                                                    ? Center(
+                                                        child: NesIcon(
+                                                          size: Size.square(
+                                                            cellSize * .6,
                                                           ),
+                                                          iconData: NesIcons
+                                                              .checkedFlag,
                                                         ),
                                                       )
-                                                    : null,
+                                                    : _steps.contains((x, y))
+                                                        ? _FilledStep(
+                                                            cellSize: cellSize,
+                                                            stepColor:
+                                                                stepColor,
+                                                          )
+                                                        : null,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                            ],
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
+                          if (modifiers.isNotEmpty)
+                            Positioned(
+                              right: 8,
+                              top: 8,
+                              child: Row(
+                                children: [
+                                  for (final icon in modifiers)
+                                    NesIcon(iconData: icon),
+                                ],
+                              ),
+                            ),
+                        ],
                       );
                     },
                   ),
@@ -275,6 +289,31 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FilledStep extends StatelessWidget {
+  const _FilledStep({
+    super.key,
+    required this.cellSize,
+    required this.stepColor,
+  });
+
+  final double cellSize;
+  final Color stepColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      child: SizedBox.square(
+        dimension: cellSize * .6,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: stepColor,
+          ),
         ),
       ),
     );

@@ -20,6 +20,23 @@ enum PathDirection {
   }
 }
 
+/// {@template path_result}
+/// The result of an evaluated path.
+/// {@endtemplate}
+class PathResult {
+  /// {@macro path_result}
+  const PathResult({
+    required this.path,
+    this.repeating = false,
+  });
+
+  /// The path.
+  final List<PathDirection> path;
+
+  /// If the path is repeating or not.
+  final bool repeating;
+}
+
 /// {@template pathxp}
 /// Like regular expressions but for defining paths in a grid
 /// {@endtemplate}
@@ -30,17 +47,20 @@ class Pathxp {
   /// The raw expresion.
   final String expression;
 
-  List<PathDirection>? _parsedPath;
+  PathResult? _parsedPath;
 
   /// Returns the path from the expression.
-  List<PathDirection> get path {
+  PathResult get path {
     return _parsedPath ??= _parseExpression();
   }
 
-  List<PathDirection> _parseExpression() {
-    final mainRegExp = RegExp('{([TBLR0-9,]+)}');
+  PathResult _parseExpression() {
+    final mainRegExp = RegExp('([R]?){([TBLR0-9,]+)}');
+
+    final modifiers = mainRegExp.matchAsPrefix(expression)?.group(1);
+
     final internalExpression =
-        mainRegExp.matchAsPrefix(expression.replaceAll(' ', ''))?.group(1);
+        mainRegExp.matchAsPrefix(expression.replaceAll(' ', ''))?.group(2);
 
     if (internalExpression == null) {
       throw ArgumentError('Invalid path expression: $expression');
@@ -70,6 +90,9 @@ class Pathxp {
       );
     }
 
-    return parsedPath;
+    return PathResult(
+      path: parsedPath,
+      repeating: modifiers?.contains('R') ?? false,
+    );
   }
 }

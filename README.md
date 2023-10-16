@@ -40,6 +40,14 @@ symbol:
 
 This expression means two steps up, one left and 3 down.
 
+## Modifiers
+
+Paths can also have modifiers, which is meant to define metadata about a path, they are done
+by adding their special identifier at the beginning of the expression, like `[modifiers]{...}`.
+
+Available modifiers:
+ - Repeating (`R`): Means that the path should repeat.
+
 ## Online editor
 
 A simple online editor where you can test expressions is available at: https://erickzanardo.github.io/pathxp/
