@@ -42,7 +42,7 @@ This expression means two steps up, one left and 3 down.
 
 ## Modifiers
 
-Paths can also have modifiers, which is meant to definie metadata about a path, they are done
+Paths can also have modifiers, which is meant to define metadata about a path, they are done
 by adding their special identifier at the beginning of the expression, like `[modifiers]{...}`.
 
 Available modifiers:
