@@ -47,7 +47,7 @@ by adding their special identifier at the beginning of the expression, like `[mo
 
 Available modifiers:
  - Repeating (`R`): Means that the path should repeat.
- - Inifinite (`I`): Means that the path start again when it ends..
+ - Infinite (`I`): Means that the path start again when it ends..
 
 ## Online editor
 
