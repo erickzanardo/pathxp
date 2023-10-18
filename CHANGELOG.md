@@ -1,3 +1,7 @@
+# 0.4.0
+
+- feat: add infinite modifier
+
 # 0.3.0
 
 - fix: modifiers
