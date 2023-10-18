@@ -28,6 +28,7 @@ class PathResult {
   const PathResult({
     required this.path,
     this.repeating = false,
+    this.infinite = false,
   });
 
   /// The path.
@@ -35,6 +36,9 @@ class PathResult {
 
   /// If the path is repeating or not.
   final bool repeating;
+
+  /// If the path is infinite or not.
+  final bool infinite;
 }
 
 /// {@template pathxp}
@@ -55,7 +59,7 @@ class Pathxp {
   }
 
   PathResult _parseExpression() {
-    final mainRegExp = RegExp('([R]?){([TBLR0-9,]+)}');
+    final mainRegExp = RegExp('([RI]?){([TBLR0-9,]+)}');
 
     final match = mainRegExp.matchAsPrefix(expression.replaceAll(' ', ''));
 
@@ -94,6 +98,7 @@ class Pathxp {
     return PathResult(
       path: parsedPath,
       repeating: modifiers?.contains('R') ?? false,
+      infinite: modifiers?.contains('I') ?? false,
     );
   }
 }

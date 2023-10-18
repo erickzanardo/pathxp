@@ -125,6 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final modifiers = [
+      if (_parsedPath?.infinite ?? false) NesIcons.infinite,
       if (_parsedPath?.repeating ?? false) NesIcons.redo,
     ];
 

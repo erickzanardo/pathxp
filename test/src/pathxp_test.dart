@@ -89,5 +89,40 @@ void main() {
         ),
       );
     });
+
+    test('is infinite is false by default', () {
+      expect(
+        Pathxp('{T}').path.infinite,
+        isFalse,
+      );
+    });
+
+    test('can detect is infinite', () {
+      final result = Pathxp('I{T}').path;
+      expect(result.infinite, isTrue);
+      expect(result.path, equals([PathDirection.T]));
+    });
+
+    test('can detect is infinite with multiple steps', () {
+      final result = Pathxp('I{T, 2L}').path;
+      expect(result.infinite, isTrue);
+      expect(
+        result.path,
+        equals(
+          [PathDirection.T, PathDirection.L, PathDirection.L],
+        ),
+      );
+    });
+
+    test('can detect is infinite with multiple steps and contains Right', () {
+      final result = Pathxp('I{T, 2L, R}').path;
+      expect(result.infinite, isTrue);
+      expect(
+        result.path,
+        equals(
+          [PathDirection.T, PathDirection.L, PathDirection.L, PathDirection.R],
+        ),
+      );
+    });
   });
 }
