@@ -57,10 +57,11 @@ class Pathxp {
   PathResult _parseExpression() {
     final mainRegExp = RegExp('([R]?){([TBLR0-9,]+)}');
 
-    final modifiers = mainRegExp.matchAsPrefix(expression)?.group(1);
+    final match = mainRegExp.matchAsPrefix(expression.replaceAll(' ', ''));
 
-    final internalExpression =
-        mainRegExp.matchAsPrefix(expression.replaceAll(' ', ''))?.group(2);
+    final modifiers = match?.group(1);
+
+    final internalExpression = match?.group(2);
 
     if (internalExpression == null) {
       throw ArgumentError('Invalid path expression: $expression');
