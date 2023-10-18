@@ -1,6 +1,6 @@
 name: pathxp
 description: Like regular expressions but for defining paths in a grid
-version: 0.2.0
+version: 0.3.0
 repository: https://github.com/erickzanardo/pathxp
 
 environment:

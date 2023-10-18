@@ -1,3 +1,7 @@
+# 0.3.0
+
+- fix: modifiers
+
 # 0.2.0
 
 - feat: add repeating modifier
