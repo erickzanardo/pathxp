@@ -67,5 +67,27 @@ void main() {
       expect(result.repeating, isTrue);
       expect(result.path, equals([PathDirection.T]));
     });
+
+    test('can detect is repeating with multiple steps', () {
+      final result = Pathxp('R{T, 2L}').path;
+      expect(result.repeating, isTrue);
+      expect(
+        result.path,
+        equals(
+          [PathDirection.T, PathDirection.L, PathDirection.L],
+        ),
+      );
+    });
+
+    test('can detect is repeating with multiple steps and contains Right', () {
+      final result = Pathxp('R{T, 2L, R}').path;
+      expect(result.repeating, isTrue);
+      expect(
+        result.path,
+        equals(
+          [PathDirection.T, PathDirection.L, PathDirection.L, PathDirection.R],
+        ),
+      );
+    });
   });
 }
